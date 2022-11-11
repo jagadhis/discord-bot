@@ -20,7 +20,15 @@ client.on('ready',() => {
     console.log(`Logged in as ${client.user.tag}!`);
 
 })
-
+function getQuote() {
+  return fetch("https://zenquotes.io/api/random")
+    .then(res => {
+      return res.json()
+      })
+    .then(data => {
+      return data[0]["q"] + " -" + data[0]["a"]
+    })
+}
 
 const prefix = "!";
 
@@ -31,18 +39,10 @@ client.on("messageCreate", async function(message) {
   const commandBody = message.content.slice(prefix.length);
   const args = commandBody.split(' ');
   const command = args.shift().toLowerCase();
-  if(command === "meme"){
-    message.channel.send("Here's your meme!");
-      const img = await getMeme();
-      message.channel.send(img);
+  if(command === "inspire"){
+    getQuote().then(quote => message.channel.send(quote))
   }
-  else if (command === "eye"){
-    message.channel.send("You are now subscribed to eye reminders.");
-       interval = setInterval (function () {
-        message.channel.send("Please take an eye break now!")
-        .catch(console.error); 
-      }, 3600000); 
-  }
+ 
 
   if (command === "ping") {
     const timeTaken = Date.now() - message.createdTimestamp;
